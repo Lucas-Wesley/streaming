@@ -1,0 +1,13 @@
+services:
+  # O Servidor de Streaming (Ingestão + Transcoding)
+  nginx-rtmp:
+    image: tiangolo/nginx-rtmp:latest-2026-01-26
+    container_name: stream_server
+    ports:
+      - "1935:1935" # Entrada OBS
+      - "8080:8080" # Saída Player (HLS)
+    volumes:
+      - ../infra/nginx.conf:/etc/nginx/nginx.conf # Sua config customizada
+      - ../hls:/hls
+    depends_on:
+      - backend

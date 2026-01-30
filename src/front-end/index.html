@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Plataforma de Streaming</title>
+    <style>
+        body { margin: 0; background-color: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
+        video { width: 80%; max-width: 800px; box-shadow: 0 0 20px rgba(0,0,0,0.5); background: black; }
+        h1 { margin-bottom: 20px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+
+    <h1>🔴 Ao Vivo</h1>
+    
+    <video id="video" controls autoplay muted></video>
+
+    <script>
+        // CONFIGURAÇÃO: Coloque aqui a chave que você está usando no OBS
+        const streamKey = 'lcuas';
+        const videoSrc = `http://localhost:8080/hls/${streamKey}.m3u8`;
+        
+        const video = document.getElementById('video');
+
+        if (Hls.isSupported()) {
+            // Caso 1: Navegadores modernos (Chrome, Firefox, Edge)
+            const hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                console.log('Manifesto carregado, iniciando vídeo...');
+                video.play().catch(e => console.log("Autoplay bloqueado pelo navegador (clique no play)"));
+            });
+            
+            // Tratamento de erros (ex: Stream offline)
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    console.error("Erro fatal no HLS:", data);
+                }
+            });
+
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Caso 2: Safari (Suporte nativo)
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        }
+    </script>
+</body>
+</html>
