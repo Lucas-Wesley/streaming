@@ -12,7 +12,7 @@
     "compose:exec": "docker compose -f docker/docker-compose.yaml exec -it backend bash",
     "test": "vitest run",
     "test:watch": "vitest",
-    "dev": "nodemon --exec tsx src/main.ts"
+    "dev": "nodemon --exec tsx src/api.ts"
   },
   "keywords": [],
   "author": "",
