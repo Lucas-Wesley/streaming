@@ -16,8 +16,8 @@ export class AccountDAODatabase implements AccountDAO {
 
   async save(account: any) {
     await this.connection.query(
-      "INSERT INTO streaming.account (account_id, name, email, document, password) VALUES ($1, $2, $3, $4, $5)",
-      [account.account_id, account.name, account.email, account.document, account.password]
+      "INSERT INTO streaming.account (account_id, name, email, password, stream_key) VALUES ($1, $2, $3, $4, $5)",
+      [account.account_id, account.name, account.email, account.password, account.stream_key]
     );
   }
 

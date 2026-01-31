@@ -8,12 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-// IMPORTANTE: O Nginx envia dados como form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// --- Servir arquivos estáticos (HTML, CSS, JS) ---
-// Isso libera o acesso à pasta "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
 const accountDAO = new AccountDAODatabase();
@@ -39,19 +35,12 @@ app.get("/accounts/:accountId", async (req: Request, res: Response) => {
   }
 });
 
-// Rota que o Nginx chama quando alguém começa a transmitir
 app.post('/auth', (req, res) => {
-  const streamKey = req.body.name; // A "chave" que você coloca no OBS
-
-  console.log(`[OBS Conectado] Tentando transmitir com a chave: ${streamKey}`);
-  
-  // Lógica Simples: Aceita tudo!
-  // Se quisesse bloquear, bastava responder res.status(403).send();
-  console.log('Autorizado! ✅');
+  const streamKey = req.body.name;
+  console.log(`Autorizado! ✅ [OBS Conectado] Tentando transmitir com a chave: ${streamKey}`);
   res.status(200).send('OK');
 });
 
-// Rota Principal: Serve o Player
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'front-end', 'index.html'));
 });
