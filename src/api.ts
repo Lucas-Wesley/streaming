@@ -3,6 +3,7 @@ import AccountService from "./AccountService";
 import { AccountDAODatabase } from "./AccountDAO";
 import path from "path";
 import { fileURLToPath } from "url";
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,7 +43,15 @@ app.post('/auth', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'front-end', 'index.html'));
+    const streamKey = process.env.KEY_STREAM || 'default';
+    const htmlPath = path.join(__dirname, 'front-end', 'index.html');
+    
+    // Lê o HTML e substitui a chave
+    const fs = require('fs');
+    let html = fs.readFileSync(htmlPath, 'utf8');
+    html = html.replace("const streamKey = 'lcuas';", `const streamKey = '${streamKey}';`);
+    
+    res.send(html);
 });
 
 app.listen(3000, () => {

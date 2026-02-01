@@ -9,6 +9,7 @@
     "compose:up": "docker compose -f docker/docker-compose.yaml up -d --build",
     "compose:down": "docker compose -f docker/docker-compose.yaml down -v",
     "compose:logs": "docker compose -f docker/docker-compose.yaml logs -f",
+    "compose:logs:monitor": "docker compose -f docker/docker-compose.yaml logs -f monitor",
     "compose:exec": "docker compose -f docker/docker-compose.yaml exec -it backend bash",
     "compose:dev": "docker compose -f docker/docker-compose.yaml exec -it backend npm run dev",
     "compose:restart": "npm run compose:down && npm run compose:up",
@@ -23,6 +24,7 @@
   "dependencies": {
     "@types/express": "^5.0.6",
     "axios": "^1.13.4",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "nodemon": "^3.1.11",
     "pg-promise": "^12.3.0",

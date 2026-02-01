@@ -64,3 +64,49 @@ services:
         limits:
           cpus: '1.50'    # Aumentado para 1.50 para suportar 3 qualidades
           memory: 1024M   # 1GB só para vídeo (sobra bastante)
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MONITOR (Coleta de Estatísticas - MÁQUINA DEDICADA)
+  # ═══════════════════════════════════════════════════════════════════════════
+  # ARQUITETURA DE PRODUÇÃO:
+  #   Máquina 1 (t3.small):    nginx-rtmp + backend + db
+  #   Máquina 2 (t4g.nano):    APENAS monitor (este container)
+  # 
+  # AWS t4g.nano (ARM Graviton2) - MENOR INSTÂNCIA EC2 DISPONÍVEL:
+  #   - vCPUs: 2 burstable (baseline 10% total = 0.20 vCPU sustentado)
+  #   - RAM: 512 MB (total do sistema operacional)
+  #   - Storage: EBS-only (gp3 recomendado para logs)
+  #   - Network: Até 5 Gbps
+  #   - Custo: ~$3.01/mês (us-east-1, On-Demand)
+  # 
+  # OTIMIZAÇÃO PARA LOGS CSV:
+  #   - Sistema Operacional: ~150MB RAM (Amazon Linux 2023 minimal)
+  #   - Docker Daemon: ~50MB RAM
+  #   - Sobra para apps: ~310MB RAM
+  #   - CPU: Burst credits permitem picos de 100% quando necessário
+  # 
+  # ESTRATÉGIA DE RECURSOS:
+  #   Como é máquina dedicada, podemos ser GENEROSOS nos limites.
+  #   O monitor pode usar até 90% dos recursos (OS usa o resto).
+  # ═══════════════════════════════════════════════════════════════════════════
+  monitor:
+    image: docker:cli
+    container_name: stats_monitor
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../infra/monitor_containers.sh:/monitor.sh:ro
+      - ../logs:/logs
+    command: sh /monitor.sh
+    depends_on:
+      - nginx-rtmp
+      - backend
+      - db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.80'      # 90% dos 2 vCPUs (deixa 10% para SO + Docker)
+          memory: 400M      # ~78% da RAM disponível (512MB - 112MB SO/Docker)
+        reservations:
+          cpus: '0.10'      # Baseline mínimo (50% de 0.20 sustentado)
+          memory: 128M      # Garante operação mesmo com pouca RAM
