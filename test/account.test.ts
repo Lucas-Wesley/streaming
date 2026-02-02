@@ -25,6 +25,9 @@ test("Deve criar uma conta", async () => {
   expect(outputGetAccount.account_id).toBe(outputSignup.account_id);
   expect(outputGetAccount.name).toBe(input.name);
   expect(outputGetAccount.email).toBe(input.email);
+  expect(outputGetAccount.stream_key).toMatch(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  );
 });
 
 test("Deve logar na plataforma", async () => {
@@ -43,8 +46,6 @@ test("Deve logar na plataforma", async () => {
 
 // AFTER ALL
 afterAll(async () => {
-
-  console.log("afterAll");
   const input = {
     email: "john.doe@example.com",
     password: "Abc12345",

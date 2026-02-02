@@ -10,7 +10,8 @@ export function logResponse(req: Request, res: Response, next: NextFunction) {
   res.on("finish", () => {
     const timestamp = new Date().toISOString().split(".")[0];
     console.log(
-      `response - [${timestamp}] ${req.method} ${req.url} ${res.statusCode} ${res.statusMessage}`
+      `response - [${timestamp}] ${req.method} ${req.url} ${res.statusCode} ${res.statusMessage}
+      --------------------------------`
     );
   });
   next();

@@ -11,6 +11,7 @@ services:
       - ../:/app
     ports:
       - 3000:3000
+      - 8888:8888 # front-end
     command: sleep infinity
     depends_on:
       - db

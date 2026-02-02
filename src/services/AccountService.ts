@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import { validateEmail, validatePassword, validateName } from "./validates/validateAccount";
-import type { AccountDAO } from "./AccountDAO";
+import { validateEmail, validatePassword, validateName } from "../validates/validateAccount";
+import type { AccountDAO } from "../DAO/AccountDAO";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 export default class AccountService {
