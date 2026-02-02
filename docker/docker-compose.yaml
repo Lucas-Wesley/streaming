@@ -5,20 +5,20 @@ services:
   # -------------------------------------------------------
   backend:
     build:
-      context: .
+      context: ..
+      dockerfile: docker/Dockerfile.backend
     volumes:
       - ../:/app
     ports:
       - 3000:3000
-    working_dir: /app
-    command: npm run dev
+    command: sleep infinity
     depends_on:
       - db
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'    # 1/4 de um núcleo é suficiente
-          memory: 256M    # Node.js simples roda bem aqui
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.25'    # 1/4 de um núcleo é suficiente
+    #       memory: 256M    # Node.js simples roda bem aqui
 
   # -------------------------------------------------------
   # BANCO DE DADOS (Postgres)
@@ -34,11 +34,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=streaming
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'    # Banco parado gasta quase nada
-          memory: 512M    # Margem de segurança para não cair
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.25'    # Banco parado gasta quase nada
+    #       memory: 512M    # Margem de segurança para não cair
 
   # -------------------------------------------------------
   # NGINX + FFMPEG (O "Devorador" de Recursos)
@@ -59,11 +59,11 @@ services:
       - ../hls:/hls
     depends_on:
       - backend
-    deploy:
-      resources:
-        limits:
-          cpus: '1.50'    # Aumentado para 1.50 para suportar 3 qualidades
-          memory: 1024M   # 1GB só para vídeo (sobra bastante)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.50'    # Aumentado para 1.50 para suportar 3 qualidades
+    #       memory: 1024M   # 1GB só para vídeo (sobra bastante)
 
   # ═══════════════════════════════════════════════════════════════════════════
   # MONITOR (Coleta de Estatísticas - MÁQUINA DEDICADA)
@@ -102,11 +102,11 @@ services:
       - backend
       - db
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1.80'      # 90% dos 2 vCPUs (deixa 10% para SO + Docker)
-          memory: 400M      # ~78% da RAM disponível (512MB - 112MB SO/Docker)
-        reservations:
-          cpus: '0.10'      # Baseline mínimo (50% de 0.20 sustentado)
-          memory: 128M      # Garante operação mesmo com pouca RAM
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.80'      # 90% dos 2 vCPUs (deixa 10% para SO + Docker)
+    #       memory: 400M      # ~78% da RAM disponível (512MB - 112MB SO/Docker)
+    #     reservations:
+    #       cpus: '0.10'      # Baseline mínimo (50% de 0.20 sustentado)
+    #       memory: 128M      # Garante operação mesmo com pouca RAM

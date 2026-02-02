@@ -1,8 +1,9 @@
 import pgPromise from "pg-promise";
-
 export interface AccountDAO {
   save(account: any): Promise<any>;
   getById(id: string): Promise<any>;
+  getByEmail(email: string): Promise<any>;
+  deleteById(id: string): Promise<any>;
 }
 
 export class AccountDAODatabase implements AccountDAO {
@@ -21,8 +22,17 @@ export class AccountDAODatabase implements AccountDAO {
     );
   }
 
+  async getByEmail(email: string) {
+    const [result] = await this.connection.query("SELECT * FROM streaming.account WHERE email = $1 LIMIT 1", [email]);
+    return result;
+  }
+
   async getById(id: string) { 
     const [result] = await this.connection.query("SELECT * FROM streaming.account WHERE account_id = $1", [id]);
     return result;
+  }
+
+  async deleteById(id: string) {
+    await this.connection.query("DELETE FROM streaming.account WHERE account_id = $1", [id]);
   }
 }

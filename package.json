@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docker:build": "docker build -t str_backend ./docker",
     "docker:run": "docker run -it -v $(pwd)/.:/app str_backend bash",
     "compose:up": "docker compose -f docker/docker-compose.yaml up -d --build",
     "compose:down": "docker compose -f docker/docker-compose.yaml down -v",
     "compose:logs": "docker compose -f docker/docker-compose.yaml logs -f",
+    "compose:logs:backend": "docker compose -f docker/docker-compose.yaml logs -f backend ",
     "compose:logs:monitor": "docker compose -f docker/docker-compose.yaml logs -f monitor",
     "compose:exec": "docker compose -f docker/docker-compose.yaml exec -it backend bash",
     "compose:dev": "docker compose -f docker/docker-compose.yaml exec -it backend npm run dev",
@@ -22,15 +22,21 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@types/express": "^5.0.6",
     "axios": "^1.13.4",
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "nodemon": "^3.1.11",
     "pg-promise": "^12.3.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10"
   }
 }
