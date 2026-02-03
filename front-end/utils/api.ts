@@ -12,7 +12,7 @@ export const $api = <T>(request: string, opts?: FetchOptions) => {
 
       if (token.value) {
         options.headers = options.headers || {}
-        options.headers.Authorization = `Bearer ${token.value}`
+        ;(options.headers as Record<string, string>).Authorization = `Bearer ${token.value}`
       }
 
       // CORREÇÃO 1: Usar import.meta.env.DEV
@@ -28,6 +28,5 @@ export const $api = <T>(request: string, opts?: FetchOptions) => {
         navigateTo('/login')
       }
     }
-  // CORREÇÃO 2: Cast simples usando o tipo importado
-  } as FetchOptions)
+  } as Parameters<typeof $fetch<T>>[1])
 }

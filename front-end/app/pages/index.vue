@@ -1,8 +1,8 @@
 <template>
-  <main class="">
+  <section class="container mx-auto">
     <ChannelsFollowing />
     <ChannelsLive />
-  </main>
+  </section>
 </template>
 
 <script setup>
