@@ -99,7 +99,16 @@ const password = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
 
-const authToken = useCookie('auth_token')
+const auth = useCookie<{ accessToken: string; account_id: string; email: string; name: string } | null>('auth')
+
+function setAuthCookie(data: { accessToken: string; account_id?: string; email?: string; name?: string }) {
+  auth.value = {
+    accessToken: data.accessToken,
+    account_id: data.account_id ?? '',
+    email: data.email ?? '',
+    name: data.name ?? ''
+  }
+}
 
 async function submit() {
   errorMessage.value = ''
@@ -112,7 +121,7 @@ async function submit() {
         password: password.value
       })
       if (data?.accessToken) {
-        authToken.value = data.accessToken
+        setAuthCookie(data)
         await navigateTo('/')
       }
     } else {
@@ -121,7 +130,7 @@ async function submit() {
         password: password.value
       })
       if (data?.accessToken) {
-        authToken.value = data.accessToken
+        setAuthCookie(data)
         await navigateTo('/')
       }
     }

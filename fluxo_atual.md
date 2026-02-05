@@ -67,7 +67,7 @@ Este documento explica passo a passo como o sistema de streaming funciona, desde
 - **O que acontece:** O container `stream_server` (Nginx-RTMP) recebe a conexão na porta **1935** na aplicação `live`.
 - **Validação:** Antes de aceitar, o Nginx faz um **POST** para o backend em `http://backend:3000/auth` enviando a chave (`name=lcuas`).
 - **Arquivos envolvidos:**
-  - [`infra/nginx.conf`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/infra/nginx.conf) (application live): `on_publish http://backend:3000/auth;`
+  - [`infra/nginx.conf`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/infra/nginx.conf) (application live): `on_publish http://backend:3000/auth;` (Nota: Configurado para porta 3000, mas backend roda na 4444)
   - [`src/api.ts`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/src/api.ts) (rota `/auth`): Valida e retorna `200 OK` ou `403 Forbidden`.
 
 ```nginx
@@ -135,11 +135,11 @@ hls_variant _src BANDWIDTH=5000000;
 ---
 
 ### 5. Player Solicita o Vídeo
-- **O que acontece:** O navegador acessa `http://localhost:3000` ou `http://localhost:3000/front-end/index.html`, que serve o player HTML.
+- **O que acontece:** O navegador acessa `http://localhost:4444`, que serve o player HTML.
 - **O Player (hls.js):** A biblioteca `hls.js` faz uma requisição para `http://localhost:8080/hls/lcuas.m3u8` (playlist master).
 - **Streaming Adaptativo:** O player detecta a velocidade de internet e escolhe automaticamente entre `_mid`, `_low` ou `_src`.
 - **Arquivo envolvido:**
-  - [`src/front-end/index.html`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/src/front-end/index.html):
+  - [`src/index.html`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/src/index.html):
 
 ```javascript
 const videoSrc = `http://localhost:8080/hls/${streamKey}.m3u8`;
@@ -189,7 +189,7 @@ location /hls {
 | Container        | Porta(s)       | Responsabilidade                                     |
 |------------------|----------------|------------------------------------------------------|
 | `stream_server`  | 1935, 8080     | Receber stream RTMP, orquestrar FFmpeg, servir HLS   |
-| `backend`        | 3000           | API Node.js, autenticação, servir o Player HTML      |
+| `backend`        | 4444           | API Node.js, autenticação, servir o Player HTML (Nota: Nginx busca na 3000) |
 | `db`             | 5432           | Banco de dados PostgreSQL                            |
 
 ---
@@ -201,7 +201,7 @@ location /hls {
 | [`infra/nginx.conf`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/infra/nginx.conf) | Configuração do Nginx (RTMP + HTTP)         |
 | [`infra/transcode.sh`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/infra/transcode.sh) | Script de transcodificação FFmpeg (3 qualidades) |
 | [`src/api.ts`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/src/api.ts)             | Backend Node.js (API + Autenticação)        |
-| [`src/front-end/index.html`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/src/front-end/index.html) | Player de vídeo com hls.js      |
+| [`src/index.html`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/src/index.html) | Player de vídeo com hls.js      |
 | [`docker/docker-compose.yaml`](file:///Users/lucaswesley/Desenvolvimento/lucas/streaming/docker/docker-compose.yaml) | Orquestração dos containers |
 
 ---

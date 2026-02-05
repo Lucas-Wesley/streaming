@@ -1,7 +1,7 @@
 import axios from "axios";
 
 beforeAll(async () => {
-  axios.defaults.baseURL = "http://localhost:3000";
+  axios.defaults.baseURL = "http://localhost:4444";
   axios.defaults.headers.common["Content-Type"] = "application/json";
   axios.defaults.validateStatus = (status) => status >= 200 && status < 500;
 });

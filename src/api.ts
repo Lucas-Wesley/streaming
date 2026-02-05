@@ -14,6 +14,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// CORS: permite requisições do front-end (Nuxt em outra origem)
+const allowedOrigin = '*';
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  next();
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -59,6 +72,14 @@ app.get('/', (req, res) => {
     res.send(html);
 });
 
+app.get("/api/channels/following", (req, res) => {
+  res.status(200).json({ channels: [] });
+});
+
+app.get("/api/channels/live", (req, res) => {
+  res.status(200).json({ channels: [] });
+});
+
 // Tratamento de erros global
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (!error) {
@@ -67,7 +88,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   errorHandler(error, req, res, next);
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(4444, () => {
+  console.log("Server is running on port 4444");
 });
 

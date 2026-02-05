@@ -33,4 +33,3 @@ create table streaming.view (
   created_at timestamp not null default now()
 );
 
-

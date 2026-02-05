@@ -54,9 +54,13 @@ export default class AccountService {
       },
       process.env.JWT_SECRET as string
     );
-    
+
     accountData.accessToken = accessToken;
-    return accountData;
+    return { accessToken: accessToken,
+      account_id: accountData.account_id,
+      email: accountData.email,
+      name: accountData.name
+    };
   }
 
   async deleteById(id: string) {
