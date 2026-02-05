@@ -69,9 +69,15 @@ export default class AccountService {
 
   async getById(id: string) {
     const account = await this.accountDAO.getById(id);
+    console.log(account);
     if (!account) {
       throw new Error("Account not found");
     }
-    return account;
+    return {
+      account_id: account.account_id,
+      name: account.name,
+      email: account.email,
+      stream_key: account.stream_key
+    };
   }
 }

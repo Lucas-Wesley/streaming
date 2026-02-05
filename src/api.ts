@@ -56,7 +56,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(createAccountRoutes(accountService));
-app.post('/authStream', (req, res) => {
+app.post('/auth', (req, res) => {
   const streamKey = req.body as { streamKey: string };
   console.log(`Autorizado! ✅ [OBS Conectado] Tentando transmitir com a chave: ${streamKey}`);
   res.status(200).send('OK');

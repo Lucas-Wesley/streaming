@@ -12,7 +12,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiSecret: '', // sobrescrito por NUXT_API_SECRET
     public: {
-      apiBase: '' // sobrescrito por NUXT_PUBLIC_API_BASE
+      apiBase: '', // sobrescrito por NUXT_PUBLIC_API_BASE
+      hlsBase: 'http://localhost:8080' // sobrescrito por NUXT_PUBLIC_HLS_BASE (URL do servidor HLS)
     }
   },
   modules: [

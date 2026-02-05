@@ -88,9 +88,12 @@
 </template>
 
 <script setup lang="ts">
-import { signin, signup } from '../../utils/api'
+import { signin, signup } from '../../../utils/api'
+import { useAuth } from '../../../composables/useAuth'
 
 definePageMeta({ layout: 'default' })
+
+const { setAuth } = useAuth()
 
 const isSignup = ref(false)
 const name = ref('')
@@ -98,17 +101,6 @@ const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
-
-const auth = useCookie<{ accessToken: string; account_id: string; email: string; name: string } | null>('auth')
-
-function setAuthCookie(data: { accessToken: string; account_id?: string; email?: string; name?: string }) {
-  auth.value = {
-    accessToken: data.accessToken,
-    account_id: data.account_id ?? '',
-    email: data.email ?? '',
-    name: data.name ?? ''
-  }
-}
 
 async function submit() {
   errorMessage.value = ''
@@ -120,8 +112,13 @@ async function submit() {
         email: email.value.trim(),
         password: password.value
       })
-      if (data?.accessToken) {
-        setAuthCookie(data)
+      if (data?.accessToken && data?.account_id) {
+        setAuth({
+          account_id: data.account_id,
+          accessToken: data.accessToken,
+          email: data.email ?? '',
+          name: data.name ?? ''
+        })
         await navigateTo('/')
       }
     } else {
@@ -129,8 +126,13 @@ async function submit() {
         email: email.value.trim(),
         password: password.value
       })
-      if (data?.accessToken) {
-        setAuthCookie(data)
+      if (data?.accessToken && data?.account_id) {
+        setAuth({
+          account_id: data.account_id,
+          accessToken: data.accessToken,
+          email: data.email ?? '',
+          name: data.name ?? ''
+        })
         await navigateTo('/')
       }
     }

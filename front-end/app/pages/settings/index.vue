@@ -26,34 +26,49 @@
           Cole esta chave no OBS em Configurações → Transmissão → Chave de transmissão.
         </p>
       </div>
+
+      <div
+        v-if="account?.stream_key"
+        class="mt-6 bg-[var(--twitch-card)] rounded-lg border border-[var(--twitch-border)] p-6"
+      >
+        <label class="block text-sm font-medium text-[var(--twitch-muted)] mb-2">
+          Transmissão
+        </label>
+        <button
+          type="button"
+          class="px-4 py-3 rounded font-semibold bg-[var(--twitch-purple)] text-white hover:bg-[#772ce8] transition-colors"
+          @click="goToLive"
+        >
+          Iniciar Live
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getAccount } from '../../utils/api'
-import type { Account, AuthCookie } from '../../utils/api'
+import type { Account } from '../../../utils/api'
+import { useAuth } from '../../../composables/useAuth'
 
 definePageMeta({ layout: 'default' })
 
-const auth = useCookie<AuthCookie | null>('auth')
+const { authCurrent, ensureAccount, clearAuth } = useAuth()
 
-const accountId = computed(() => auth.value?.account_id ?? null)
+const account = ref<Account | null>(null)
 
-const { data: account } = await useAsyncData<Account | null>(
-  'account-settings',
-  async () => {
-    const id = accountId.value
-    const token = auth.value?.accessToken
-    if (!id) return null
-    try {
-      return await getAccount(id, token)
-    } catch {
-      return null
+onMounted(async () => {
+  if (import.meta.client) {
+    if (!authCurrent.value) {
+      navigateTo('/login')
+      return
     }
-  },
-  { watch: [accountId, auth] }
-)
+    account.value = await ensureAccount()
+    if (!account.value) {
+      clearAuth()
+      navigateTo('/login')
+    }
+  }
+})
 
 const streamKeyMasked = computed(() => {
   const key = account.value?.stream_key
@@ -75,11 +90,12 @@ async function copyStreamKey() {
   }
 }
 
-watch(auth, (value) => {
-  if (!value?.accessToken && import.meta.client) navigateTo('/login')
-}, { immediate: true })
-
-onMounted(() => {
-  if (!auth.value?.accessToken && import.meta.client) navigateTo('/login')
-})
+function goToLive() {
+  const key = account.value?.stream_key
+  if (!key) return
+  if (import.meta.client) {
+    sessionStorage.setItem('liveStreamKey', key)
+  }
+  navigateTo('/settings/live')
+}
 </script>

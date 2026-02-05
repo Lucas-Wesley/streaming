@@ -1,26 +1,19 @@
 import { type FetchOptions } from 'ofetch'
-
-/** Dados do usuário logado salvos no cookie (sem stream_key). */
-export interface AuthCookie {
-  accessToken: string
-  account_id: string
-  email: string
-  name: string
-}
+import { getCurrentToken, clearCurrentAuth } from './authCookie'
 
 export const $api = <T>(request: string, opts?: FetchOptions) => {
   const config = useRuntimeConfig()
-  const auth = useCookie<AuthCookie | null>('auth')
 
   return $fetch<T>(request, {
     baseURL: config.public.apiBase as string,
     ...opts,
 
     onRequest({ options }) {
-      const token = auth.value?.accessToken
+      const token = getCurrentToken()
       if (token) {
-        options.headers = options.headers || {}
-        ;(options.headers as Record<string, string>).Authorization = `Bearer ${token}`
+        const headers = (options.headers || {}) as Record<string, string>
+        headers.Authorization = `Bearer ${token}`
+        options.headers = headers
       }
 
       if (import.meta.dev) {
@@ -33,8 +26,8 @@ export const $api = <T>(request: string, opts?: FetchOptions) => {
 
     onResponseError({ response }) {
       if (response.status === 401) {
-        auth.value = null
-        navigateTo('/login')
+        clearCurrentAuth()
+        if (import.meta.client) navigateTo('/login')
       }
     }
   } as Parameters<typeof $fetch<T>>[1])

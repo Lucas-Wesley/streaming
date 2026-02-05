@@ -17,6 +17,7 @@ docker compose -f docker/docker-compose.yaml exec -it db \
 # Tabelas:
 #   \dt                  Lista tabelas do schema public
 #   \dt *.*              Lista todas as tabelas de todos os schemas
+#   \dt streaming.*       Lista todas as tabelas do schema streaming
 #   \d nome_tabela       Mostra estrutura da tabela (colunas, tipos)
 #   \d+ nome_tabela      Estrutura detalhada (com tamanhos, etc)
 #

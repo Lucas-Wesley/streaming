@@ -7,7 +7,7 @@
         <NuxtLink to="/" class="hover:text-[var(--twitch-purple)]">Descobrir</NuxtLink>
       </nav>
       <div class="ml-auto flex items-center gap-4">
-        <template v-if="auth?.accessToken">
+        <template v-if="authCurrent">
           <NuxtLink
             to="/settings"
             class="p-1.5 rounded text-[var(--twitch-muted)] hover:text-white hover:bg-white/5"
@@ -35,10 +35,12 @@
 </template>
 
 <script setup lang="ts">
-const auth = useCookie<{ accessToken: string; account_id: string; email: string; name: string } | null>('auth')
+import { useAuth } from '../../composables/useAuth'
+
+const { authCurrent, clearAuth } = useAuth()
 
 function logout() {
-  auth.value = null
+  clearAuth()
   navigateTo('/')
 }
 </script>

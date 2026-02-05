@@ -17,22 +17,22 @@ export class AccountDAODatabase implements AccountDAO {
 
   async save(account: any) {
     await this.connection.query(
-      "INSERT INTO streaming.account (account_id, name, email, password, stream_key) VALUES ($1, $2, $3, $4, $5)",
+      "INSERT INTO streaming.accounts (account_id, name, email, password, stream_key) VALUES ($1, $2, $3, $4, $5)",
       [account.account_id, account.name, account.email, account.password, account.stream_key]
     );
   }
 
   async getByEmail(email: string) {
-    const [result] = await this.connection.query("SELECT * FROM streaming.account WHERE email = $1 LIMIT 1", [email]);
+    const [result] = await this.connection.query("SELECT * FROM streaming.accounts WHERE email = $1 LIMIT 1", [email]);
     return result;
   }
 
   async getById(id: string) { 
-    const [result] = await this.connection.query("SELECT * FROM streaming.account WHERE account_id = $1", [id]);
+    const [result] = await this.connection.query("SELECT * FROM streaming.accounts WHERE account_id = $1", [id]);
     return result;
   }
 
   async deleteById(id: string) {
-    await this.connection.query("DELETE FROM streaming.account WHERE account_id = $1", [id]);
+    await this.connection.query("DELETE FROM streaming.accounts WHERE account_id = $1", [id]);
   }
 }
