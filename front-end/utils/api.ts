@@ -30,3 +30,39 @@ export const $api = <T>(request: string, opts?: FetchOptions) => {
     }
   } as Parameters<typeof $fetch<T>>[1])
 }
+
+export function getChannelsFollowing() {
+  return $api<{ id: number; name: string; is_live: boolean; slug?: string }[]>('/api/channels/following')
+}
+
+export function getChannelsLive() {
+  return $api<{ id: number; name: string; is_live: boolean; slug?: string; title?: string; viewers?: number }[]>('/api/channels/live')
+}
+
+// --- Auth (POST sem token) ---
+
+export interface SignupBody {
+  name: string
+  email: string
+  password: string
+}
+
+export interface SigninBody {
+  email: string
+  password: string
+}
+
+export interface AuthResponse {
+  accessToken: string
+  name?: string
+  email?: string
+  account_id?: string
+}
+
+export function signup(body: SignupBody) {
+  return $api<AuthResponse>('/signup', { method: 'POST', body })
+}
+
+export function signin(body: SigninBody) {
+  return $api<AuthResponse>('/signin', { method: 'POST', body })
+}

@@ -1,14 +1,12 @@
 <template>
-  <section class="container mx-auto">
+  <div class="flex flex-1 min-h-0">
     <ChannelsFollowing />
-    <ChannelsLive />
-  </section>
+    <main class="flex-1 overflow-auto p-6">
+      <ChannelsLive />
+    </main>
+  </div>
 </template>
 
-<script setup>
-import ChannelsFollowing from '~/components/ChannelsFollowing.vue';
-import ChannelsLive from '~/components/ChannelsLive.vue';
-
-
+<script setup lang="ts">
 </script>
 

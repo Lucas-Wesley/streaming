@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --twitch-bg: #0e0e10;
+    --twitch-sidebar: #18181b;
+    --twitch-card: #1f1f23;
+    --twitch-border: #2d2d35;
+    --twitch-purple: #9146ff;
+    --twitch-text: #efeff1;
+    --twitch-muted: #adadb8;
+  }
+  body { background-color: var(--twitch-bg); color: var(--twitch-text); }
+}

@@ -27,15 +27,9 @@ const accountService = new AccountService(accountDAO);
 const protectedRoutes = ['/accounts', '/streams'];
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  
   const isProtectedRoute = protectedRoutes.some(route => req.url.startsWith(route));
-
-  if (!isProtectedRoute) {
-    return next();
-  }
-
+  if (!isProtectedRoute) return next();
   const accessToken = req.headers.authorization?.replace('Bearer ', '');
-
   if (!accessToken) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -49,10 +43,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(createAccountRoutes(accountService));
-
 app.post('/authStream', (req, res) => {
   const streamKey = req.body as { streamKey: string };
-  
   console.log(`Autorizado! ✅ [OBS Conectado] Tentando transmitir com a chave: ${streamKey}`);
   res.status(200).send('OK');
 });
