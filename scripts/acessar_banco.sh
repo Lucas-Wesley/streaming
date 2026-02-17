@@ -36,7 +36,7 @@ docker compose -f docker/docker-compose.yaml exec -it db \
 #   \q                   Sai do psql
 #
 # SQL (exemplos):
-#   SELECT * FROM accounts LIMIT 10;
-#   INSERT INTO accounts (name, email, ...) VALUES (...);
+#   SELECT * FROM streaming.accounts LIMIT 10;
+#   INSERT INTO streaming.accounts (name, email, ...) VALUES (...);
 #
 # ═══════════════════════════════════════════════════════════════════════════════

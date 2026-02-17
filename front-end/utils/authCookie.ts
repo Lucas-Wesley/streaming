@@ -23,7 +23,7 @@ export function getPayloadFromCookie(accountId: string): AuthPayload | null {
   if (import.meta.server || !accountId || typeof document === 'undefined') return null
   const name = cookieName(accountId)
   const match = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(name) + '=([^;]*)'))
-  const raw = match ? decodeURIComponent(match[1]) : null
+  const raw = match?.[1] ? decodeURIComponent(match[1]) : null
   if (!raw) return null
   try {
     return JSON.parse(raw) as AuthPayload
@@ -49,9 +49,23 @@ export function clearPayloadCookie(accountId: string) {
 
 const authCurrentRef = () => useCookie<string | null>(COOKIE_CURRENT, { default: () => null })
 
-/** Retorna o token da conta atual (para uso em api.ts). */
+/** Lê auth_current diretamente de document.cookie (evita uso de useCookie em callbacks como onRequest do $fetch). */
+function getAuthCurrentFromDocument(): string | null {
+  if (import.meta.server || typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(COOKIE_CURRENT) + '=([^;]*)'))
+  const raw = match?.[1] ? decodeURIComponent(match[1]) : null
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    return typeof parsed === 'string' ? parsed : null
+  } catch {
+    return raw
+  }
+}
+
+/** Retorna o token da conta atual (para uso em api.ts). Usa document.cookie diretamente para funcionar em callbacks assíncronos (onRequest). */
 export function getCurrentToken(): string | null {
-  const id = authCurrentRef().value
+  const id = getAuthCurrentFromDocument()
   if (!id) return null
   return getPayloadFromCookie(id)?.accessToken ?? null
 }

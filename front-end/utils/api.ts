@@ -11,8 +11,8 @@ export const $api = <T>(request: string, opts?: FetchOptions) => {
     onRequest({ options }) {
       const token = getCurrentToken()
       if (token) {
-        const headers = (options.headers || {}) as Record<string, string>
-        headers.Authorization = `Bearer ${token}`
+        const headers = new Headers(options.headers as HeadersInit | undefined)
+        headers.set('Authorization', `Bearer ${token}`)
         options.headers = headers
       }
 
@@ -90,4 +90,37 @@ export function getAccount(accountId: string, accessToken?: string | null) {
     ? { headers: { Authorization: `Bearer ${accessToken}` } as Record<string, string> }
     : undefined
   return $api<Account>(`/accounts/${accountId}`, opts)
+}
+
+// --- Streams (requer token) ---
+
+export interface Stream {
+  stream_id: string
+  account_id: string
+  title: string
+  stream_key: string
+  is_online: boolean
+  created_at?: string
+}
+
+export interface CreateStreamBody {
+  account_id: string
+  title: string
+  stream_key: string
+}
+
+export function createStream(data: CreateStreamBody) {
+  return $api<Stream>('/stream', { method: 'POST', body: data })
+}
+
+export function getStreamById(streamId: string) {
+  return $api<Stream>(`/stream/id/${streamId}`)
+}
+
+export function listStreamsByAccount(accountId: string) {
+  return $api<Stream[]>(`/stream/account/${accountId}`)
+}
+
+export function endStream(streamId: string) {
+  return $api<Stream>(`/stream/${streamId}/end`, { method: 'PUT' })
 }

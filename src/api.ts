@@ -9,6 +9,10 @@ import jwt from 'jsonwebtoken';
 import { logRequest, logResponse } from "./lib/logs";
 import { errorHandler } from "./lib/errorHandler";
 
+import { StreamDAODatabase } from "./DAO/StreamDAO";
+import { StreamService } from "./services/StreamService";
+import { createStreamRoutes } from "./routes/RoutesStream";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,8 +40,10 @@ app.use(logResponse);
 
 const accountDAO = new AccountDAODatabase();
 const accountService = new AccountService(accountDAO);
+const streamDAO = new StreamDAODatabase();
+const streamService = new StreamService(streamDAO);
 
-const protectedRoutes = ['/accounts', '/streams'];
+const protectedRoutes = ['/accounts', '/stream'];
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   const isProtectedRoute = protectedRoutes.some(route => req.url.startsWith(route));
@@ -55,21 +61,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+app.use(createStreamRoutes(streamService));
 app.use(createAccountRoutes(accountService));
+
 app.post('/auth', (req, res) => {
   const streamKey = req.body as { streamKey: string };
   console.log(`Autorizado! ✅ [OBS Conectado] Tentando transmitir com a chave: ${streamKey}`);
   res.status(200).send('OK');
-});
-
-app.get('/', (req, res) => {
-    const streamKey = process.env.KEY_STREAM || 'default';
-    const htmlPath = path.join(__dirname, '..', 'front-end', 'index.html');
-    
-    // Lê o HTML e substitui a chave
-    const fs = require('fs');
-    let html = fs.readFileSync(htmlPath, 'utf8');
-    res.send(html);
 });
 
 app.get("/api/channels/following", (req, res) => {
