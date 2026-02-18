@@ -13,3 +13,7 @@ export function validatePassword (password: string) {
 export function validateName (name: string) {
   return /[a-zA-Z]+ [a-zA-Z]+/.test(name);
 }
+
+export function validateUsername (username: string) {
+  return /^[a-z0-9_-]{3,25}$/.test(username);
+}

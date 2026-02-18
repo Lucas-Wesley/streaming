@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { validateEmail, validatePassword, validateName } from "../validates/validateAccount";
+import { validateEmail, validatePassword, validateName, validateUsername } from "../validates/validateAccount";
 import type { AccountDAO } from "../DAO/AccountDAO";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -16,6 +16,14 @@ export default class AccountService {
     }
     if (!validateName(account.name)) {
       throw new Error("Invalid name");
+    }
+    if (!validateUsername(account.username)) {
+      throw new Error("Invalid username");
+    }
+
+    const existingAccount = await this.accountDAO.getByUsername(account.username);
+    if (existingAccount) {
+      throw new Error("Username already taken");
     }
 
     account.account_id = crypto.randomUUID();
@@ -50,7 +58,8 @@ export default class AccountService {
       {
         accountId: accountData.account_id,
         email: accountData.email,
-        name: accountData.name
+        name: accountData.name,
+        username: accountData.username
       },
       process.env.JWT_SECRET as string
     );
@@ -58,6 +67,7 @@ export default class AccountService {
     accountData.accessToken = accessToken;
     return { accessToken: accessToken,
       account_id: accountData.account_id,
+      username: accountData.username,
       email: accountData.email,
       name: accountData.name
     };
@@ -75,6 +85,21 @@ export default class AccountService {
     }
     return {
       account_id: account.account_id,
+      username: account.username,
+      name: account.name,
+      email: account.email,
+      stream_key: account.stream_key
+    };
+  }
+
+  async getByUsername(username: string) {
+    const account = await this.accountDAO.getByUsername(username);
+    if (!account) {
+      throw new Error("Account not found");
+    }
+    return {
+      account_id: account.account_id,
+      username: account.username,
       name: account.name,
       email: account.email,
       stream_key: account.stream_key

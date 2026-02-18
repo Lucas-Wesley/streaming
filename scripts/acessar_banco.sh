@@ -37,6 +37,7 @@ docker compose -f docker/docker-compose.yaml exec -it db \
 #
 # SQL (exemplos):
 #   SELECT * FROM streaming.accounts LIMIT 10;
+#   SELECT * FROM streaming.streams LIMIT 10;
 #   INSERT INTO streaming.accounts (name, email, ...) VALUES (...);
 #
 # ═══════════════════════════════════════════════════════════════════════════════

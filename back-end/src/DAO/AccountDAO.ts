@@ -3,6 +3,7 @@ export interface AccountDAO {
   save(account: any): Promise<any>;
   getById(id: string): Promise<any>;
   getByEmail(email: string): Promise<any>;
+  getByUsername(username: string): Promise<any>;
   deleteById(id: string): Promise<any>;
 }
 
@@ -17,13 +18,18 @@ export class AccountDAODatabase implements AccountDAO {
 
   async save(account: any) {
     await this.connection.query(
-      "INSERT INTO streaming.accounts (account_id, name, email, password, stream_key) VALUES ($1, $2, $3, $4, $5)",
-      [account.account_id, account.name, account.email, account.password, account.stream_key]
+      "INSERT INTO streaming.accounts (account_id, username, name, email, password, stream_key) VALUES ($1, $2, $3, $4, $5, $6)",
+      [account.account_id, account.username, account.name, account.email, account.password, account.stream_key]
     );
   }
 
   async getByEmail(email: string) {
     const [result] = await this.connection.query("SELECT * FROM streaming.accounts WHERE email = $1 LIMIT 1", [email]);
+    return result;
+  }
+
+  async getByUsername(username: string) {
+    const [result] = await this.connection.query("SELECT * FROM streaming.accounts WHERE username = $1 LIMIT 1", [username]);
     return result;
   }
 

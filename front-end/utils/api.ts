@@ -33,9 +33,21 @@ export const $api = <T>(request: string, opts?: FetchOptions) => {
   } as Parameters<typeof $fetch<T>>[1])
 }
 
+/** Item de canal retornado pelas APIs de canais (mesmo formato de stream). */
+export interface ChannelItem {
+  stream_id: string
+  account_id: string
+  title: string
+  stream_key: string
+  is_online: boolean
+  metadata?: Record<string, unknown>
+  created_at?: string
+  updated_at?: string
+}
+
 /** Resposta das APIs de canais: { channels: [] } */
 export interface ChannelsResponse {
-  channels: { id: number; name: string; is_live: boolean; slug?: string; title?: string; viewers?: number }[]
+  channels: ChannelItem[]
 }
 
 export function getChannelsFollowing() {

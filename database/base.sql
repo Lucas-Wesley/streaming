@@ -4,6 +4,7 @@ create schema streaming;
 
 create table streaming.accounts (
   account_id uuid primary key,
+  username text not null unique,
   name text not null,
   email text not null,
   password text not null,
@@ -35,5 +36,5 @@ create table streaming.views (
   created_at timestamp not null default now()
 );
 
-insert into streaming.accounts (account_id, name, email, password, stream_key) values
-('099cd4fb-6db4-415a-8ad0-955460b1d690', 'Lucas Wesley', 'lucas@egmail.com', '$2b$10$oZArpE9TewzDjqbdHnEBU.vDnaSQ.P/4ZZ3y9skIrq2vlY/obWMXK', '7b6e3ece-ff0c-4fd1-907f-eeea2bb09ccc');
+insert into streaming.accounts (account_id, username, name, email, password, stream_key) values
+('099cd4fb-6db4-415a-8ad0-955460b1d690', 'lucaswesley', 'Lucas Wesley', 'lucas@egmail.com', '$2b$10$oZArpE9TewzDjqbdHnEBU.vDnaSQ.P/4ZZ3y9skIrq2vlY/obWMXK', '7b6e3ece-ff0c-4fd1-907f-eeea2bb09ccc');

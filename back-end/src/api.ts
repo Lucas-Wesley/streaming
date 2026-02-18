@@ -13,6 +13,8 @@ import { StreamDAODatabase } from "./DAO/StreamDAO";
 import { StreamService } from "./services/StreamService";
 import { createStreamRoutes } from "./routes/RoutesStream";
 
+import { ChannelDAODatabase } from "./DAO/ChannelDAO";
+import { ChannelService } from "./services/ChannelService";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +44,8 @@ const accountDAO = new AccountDAODatabase();
 const accountService = new AccountService(accountDAO);
 const streamDAO = new StreamDAODatabase();
 const streamService = new StreamService(streamDAO);
+const channelDAO = new ChannelDAODatabase();
+const channelService = new ChannelService(channelDAO);
 
 const protectedRoutes = ['/accounts', '/stream'];
 
@@ -70,12 +74,16 @@ app.post('/auth', (req, res) => {
   res.status(200).send('OK');
 });
 
-app.get("/api/channels/following", (req, res) => {
-  res.status(200).json({ channels: [] });
+app.get("/api/channels/following", async (req, res) => {
+  const accountId = req.query.accountId as string;
+  const channels = await channelService.listFollowing(accountId);
+  res.status(200).json({ channels });
 });
 
-app.get("/api/channels/live", (req, res) => {
-  res.status(200).json({ channels: [] });
+app.get("/api/channels/live", async (req, res) => {
+  const channels = await channelService.listLive();
+  console.log("channels", channels);
+  res.status(200).json({ channels });
 });
 
 // Tratamento de erros global

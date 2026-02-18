@@ -24,6 +24,16 @@ export function createAccountRoutes(accountService: AccountService) {
     }
   });
 
+  router.get("/accounts/username/:username", async (req: Request, res: Response) => {
+    const { username } = req.params as { username: string };
+    try {
+      const account = await accountService.getByUsername(username);
+      res.status(200).json(account);
+    } catch (error: any) {
+      res.status(404).json({ error: error.message });
+    }
+  });
+
   router.get("/accounts/:accountId", async (req: Request, res: Response) => {
     const { accountId } = req.params as { accountId: string };
     try {
